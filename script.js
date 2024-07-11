@@ -1,8 +1,9 @@
 import {BubbleSort,InsertionSort} from "./sorting.js"
+import {MergeSort} from "./merge_sort.js"
 
 let arr = [];
 let org = [];
-const n = 30;
+const n = 25;
 
 const chart = document.getElementById("chart");
 
@@ -66,15 +67,40 @@ function sortArr(type){
 
     //use a copy of the array
     const copy = [...arr];
+    const copy2 = [...arr];
+
     let movelist = [];
 
     if(type && type == "bubble"){
         movelist = BubbleSort(copy);
+        MergeSort(copy2);
+
+        console.log(copy);
+        console.log(copy2);
+
+        
+        let same = false;
+
+        for(let i = 0; i < copy.length; i++){
+            if(copy[i] === copy2[i]){
+                same = true;
+            }else{
+                same = false;
+            }
+        }
+
+        if(same){
+            console.log("THEY ARE THE SAME");
+        }else{
+            console.log("OH NO");
+        }
+
+
     }
     else if(type && type == "insertion"){
         movelist = InsertionSort(copy);
     }
-    animateArr(movelist);
+   // animateArr(movelist);
     
 
 }
@@ -146,8 +172,6 @@ function playSound(freq){
 //call to show an inital array when loaded in
 changeArr();
 showArr();
-
-
 
 
 
