@@ -1,8 +1,16 @@
+import {BubbleSort,InsertionSort} from "./sorting.js"
 
 let arr = [];
-n = 20;
+const n = 30;
 
 const chart = document.getElementById("chart");
+
+const changeButton = document.getElementById("changeButton");
+const sortButton = document.getElementById("sortButton");
+
+changeButton.addEventListener("click", changeArr);
+sortButton.addEventListener("click", sortArr);
+
 
 function changeArr(){
 
@@ -11,8 +19,6 @@ function changeArr(){
     }
     showArr();
 }
-
-console.log(arr);
 
 function showArr(move){
 
@@ -33,52 +39,26 @@ function showArr(move){
     }
 }
 
-function BubbleSort(arr){
-
-    movelist = [];
-
-    let isSwapped = false;
-
-    for(let i = 0; i < arr.length; i++){
-
-        isSwapped = false;
-
-        for(j = 1; j < arr.length; j++){
-
-            movelist.push({indices: [j-1, j], type: "compare"});
-
-            if(arr[j-1] > arr[j]){
-                movelist.push({indices: [j-1, j], type: "swap"});
-                [arr[j-1], arr[j]] = [arr[j], arr[j-1]];
-                
-                isSwapped = true;
-            }
-        }
-
-        if(!isSwapped)
-            break;
-    }
-    return movelist;
-}
-
 function sortArr(){
 
     const copy = [...arr];
-    console.log(arr);
-    const movelist = BubbleSort(copy);
-    console.log(movelist);
+    const copy2 = [...arr];
+    //const movelist = BubbleSort(copy);
+    const movelist = InsertionSort(copy);
     animateArr(movelist);
-    console.log(copy);
+
 }
 
 function animateArr(movelist){
     if(movelist.length == 0)
         return showArr();
 
-    move = {};
+    let move = {};
     
     move = movelist.shift();
 
+    let i;
+    let j;
 
     [i,j] = move.indices;
     
@@ -87,10 +67,10 @@ function animateArr(movelist){
     }
 
     playSound(100+(arr[i]/100)*330);
-    playSound(100+(arr[j]/100)*330);
+    playSound(100+(arr[j]/100)*300);
     showArr(move);
 
-    setTimeout(() => animateArr(movelist), 25);
+    setTimeout(() => animateArr(movelist), 50);
 }
 
 let audiocontext = null;
@@ -115,9 +95,7 @@ function playSound(freq){
     node.gain.linearRampToValueAtTime(0,audiocontext.currentTime+duration);
 
     osc.connect(node);
-    node.connect(audiocontext.destination);
-
-    
+    node.connect(audiocontext.destination);   
 }
 
 changeArr();
