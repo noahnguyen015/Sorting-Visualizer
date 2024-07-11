@@ -1,15 +1,22 @@
 import {BubbleSort,InsertionSort} from "./sorting.js"
 
 let arr = [];
+let org = [];
 const n = 30;
 
 const chart = document.getElementById("chart");
 
 const changeButton = document.getElementById("changeButton");
-const sortButton = document.getElementById("sortButton");
+const resetButton = document.getElementById("resetButton");
+
+const bubbleSort = document.getElementById("bubbleSort");
+const insertionSort = document.getElementById("insertionSort");
 
 changeButton.addEventListener("click", changeArr);
-sortButton.addEventListener("click", sortArr);
+resetButton.addEventListener("click", resetArr);
+
+bubbleSort.addEventListener("click", ()=> sortArr("bubble"));
+insertionSort.addEventListener("click", () => sortArr("insertion"));
 
 
 function changeArr(){
@@ -17,6 +24,15 @@ function changeArr(){
     for(let i = 0; i < n; i++){
         arr[i] = Math.floor(Math.random()*(100-5+1)+5);
     }
+    org = [...arr];
+    showArr();
+}
+
+function resetArr(){
+    for(let i = 0; i < n; i++){
+        arr[i] = org[i];
+    }
+    console.log(arr);
     showArr();
 }
 
@@ -39,13 +55,19 @@ function showArr(move){
     }
 }
 
-function sortArr(){
+function sortArr(type){
 
     const copy = [...arr];
-    const copy2 = [...arr];
-    //const movelist = BubbleSort(copy);
-    const movelist = InsertionSort(copy);
+    let movelist = [];
+
+    if(type && type == "bubble"){
+        movelist = BubbleSort(copy);
+    }
+    else if(type && type == "insertion"){
+        movelist = InsertionSort(copy);
+    }
     animateArr(movelist);
+    
 
 }
 
@@ -67,7 +89,7 @@ function animateArr(movelist){
     }
 
     playSound(100+(arr[i]/100)*330);
-    playSound(100+(arr[j]/100)*300);
+    playSound(100+(arr[j]/100)*330);
     showArr(move);
 
     setTimeout(() => animateArr(movelist), 50);

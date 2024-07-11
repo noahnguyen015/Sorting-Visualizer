@@ -9,7 +9,7 @@ export function BubbleSort(arr){
 
         isSwapped = false;
 
-        for(let j = 1; j < arr.length; j++){
+        for(let j = 1; j < arr.length-i; j++){
 
             movelist.push({indices: [j-1, j], type: "compare"});
 
@@ -33,7 +33,6 @@ export function InsertionSort(arr){
 
     for(let i = 0; i < arr.length; i++){
 
-
         for(let j = i-1; j >= 0; j--){
 
             movelist.push({indices: [j, j+1], type: "compare"});
@@ -49,8 +48,4 @@ export function InsertionSort(arr){
 
     return movelist;
 }
-
-const arr2 = [9,11,1,5,4,38,11,3,7];
-
-InsertionSort(arr2);
 
