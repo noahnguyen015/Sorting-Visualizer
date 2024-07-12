@@ -1,5 +1,5 @@
 import {BubbleSort,InsertionSort} from "./sorting.js"
-import {MergeSort} from "./merge_sort.js"
+import {MergeSort,mergelist} from "./merge_sort.js"
 
 let arr = [];
 let org = [];
@@ -23,10 +23,14 @@ insertionSort.addEventListener("click", () => sortArr("insertion"));
 //change the numbers of the array
 function changeArr(){
 
+    
     for(let i = 0; i < n; i++){
         //equation returns number from 5-100
         arr[i] = Math.floor(Math.random()*(100-5+1)+5);
     }
+
+    //arr = [72,43,48,39,38,98,92,58,52,9];
+
     org = [...arr];
     showArr();
 }
@@ -67,42 +71,41 @@ function sortArr(type){
 
     //use a copy of the array
     const copy = [...arr];
-    const copy2 = [...arr];
+    let copy2 = [...arr];
+    let copy3 = arr.slice();
 
     let movelist = [];
+    let movelist2 = [];
 
     if(type && type == "bubble"){
+        console.log(copy2);
         movelist = BubbleSort(copy);
-        MergeSort(copy2);
+        MergeSort(0,arr.length-1,copy2,copy3);
 
         console.log(copy);
         console.log(copy2);
 
+        let same = false
         
-        let same = false;
-
         for(let i = 0; i < copy.length; i++){
-            if(copy[i] === copy2[i]){
+            if(copy[i] === copy2[i])
                 same = true;
-            }else{
+            else
                 same = false;
-            }
         }
 
         if(same){
-            console.log("THEY ARE THE SAME");
-        }else{
-            console.log("OH NO");
+            console.log("THEY ARE SAME");
+        }else
+        {
+            console.log("WRONG");
         }
-
 
     }
     else if(type && type == "insertion"){
         movelist = InsertionSort(copy);
+        animateArr(movelist);
     }
-   // animateArr(movelist);
-    
-
 }
 
 function animateArr(movelist){
@@ -172,6 +175,8 @@ function playSound(freq){
 //call to show an inital array when loaded in
 changeArr();
 showArr();
+
+
 
 
 
