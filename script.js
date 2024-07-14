@@ -3,6 +3,7 @@ import {MergeSort,mergelist} from "./merge_sort.js"
 
 let arr = [];
 let arr2 = [];
+let arr3 = [];
 let org = [];
 const n = 50;
 
@@ -35,6 +36,8 @@ function changeArr(){
     org = [...arr];
 
     arr2 = [...arr];
+    arr3 = [...arr];
+
     showArr();
 }
 
@@ -93,6 +96,7 @@ function sortArr(type){
         console.log(copy);
         MergeSort(0,arr.length-1,copy,copy2,0,mergelist);
         console.log(mergelist);
+
         animateMerge(mergelist);
 
     }
@@ -167,11 +171,11 @@ function showArr2(move){
     //clear element to show updated chart
     chart2.innerHTML = "";
 
-    for(let i = 0; i < arr2.length; i++){
+    for(let i = 0; i < arr3.length; i++){
 
         //create a bar with specified height and add style
         const bar = document.createElement("div");
-        bar.style.height = arr2[i] + "%";
+        bar.style.height = arr3[i] + "%";
         bar.classList.add("bar");
         chart2.appendChild(bar);
 
@@ -181,6 +185,32 @@ function showArr2(move){
         {
             const color = "rgb(81, 194, 81)";
             bar.style.backgroundColor = color;
+        }
+    }
+}
+
+function showMerge(move, idx1, idx2,arrC){
+
+    chart2.innerHTML = "";
+
+    for(let i = 0; i < arr3.length; i++){
+        
+        if(i == idx1 || i == idx2){
+            const bar = document.createElement("div");
+            bar.style.height = arrC[i] + "%";
+            bar.classList.add("bar");
+            chart2.appendChild(bar);
+            arr3[i] = arrC[i];
+            if(move && move.indices.includes(i)){
+                const color = "rgb(81, 194, 81)";
+                bar.style.backgroundColor = color;
+            }
+        }else{
+            //create a bar with specified height and add style
+            const bar = document.createElement("div");
+            bar.style.height = arr3[i] + "%";
+            bar.classList.add("bar");
+            chart2.appendChild(bar);
         }
     }
 }
@@ -199,20 +229,18 @@ function animateMerge(mergelist){
     [i,j] = move.indices;
 
     if(move.type == "arr"){
-        console.log(`${i} ${j}`);
         arr2[i] = arr[j];
         playSound(100+(arr[j]/100)*330);
         showArr2(move);
+        showMerge(move,i,j,arr2);
     }else{
-        console.log(`${i} ${j}`);
         arr[i] = arr2[j];
         playSound(100+(arr2[j]/100)*330);
-        showArr(move);
+        //showArr(move);
+        showMerge(move,i,j,arr);
     }
 
     setTimeout(()=> animateMerge(mergelist), 50);
-
-
 }
 
 //call to show an inital array when loaded in
