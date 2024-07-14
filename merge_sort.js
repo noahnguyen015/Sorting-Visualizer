@@ -82,7 +82,7 @@ function merge(leftArr, rightArr, arr, movelist1, movelist2){
 
 */
 
-export function MergeSort(first,last,arr,copy){
+export function MergeSort(first,last,arr,copy,num,mergelist){
 
     //if it is just one element, just return it as it is 
     if(first == last)
@@ -104,26 +104,49 @@ export function MergeSort(first,last,arr,copy){
        right hand side: middle+1, end
     */
 
-    MergeSort(first, mid, copy, arr);
-    MergeSort(mid+1, last, copy, arr);
-    merge(first, mid, last, arr, copy);
+//    console.log(num);
+    num++;
 
+    MergeSort(first, mid, copy, arr,num,mergelist);
+    MergeSort(mid+1, last, copy, arr,num,mergelist);
+    merge(first, mid, last, arr, copy,num);
+
+  //  console.log(mergelist);
+    console.log(copy);
+    console.log(arr);
 }
 
-function merge(first, mid, last, arr, copy){
+function merge(first, mid, last, arr, copy,num){
+
+// let moves = [];
+
+//    console.log(num);
 
     let idx = first;
     let i = first;
     let j = mid+1;
 
-
     //use values of left indexes if value is smaller, else use values the right indexes
+
     while(i <= mid && j <= last){
+
         if(copy[i] < copy[j]){
+            console.log(`${arr[idx]}(${idx}) ==> ${copy[i]}(${i})`);
+            if(num%2 === 0)
+                mergelist.push({indices: [idx, i], type: "copy"});
+            else
+                mergelist.push({indices: [idx, i], type: "arr"});
+
             arr[idx] = copy[i];
             idx++;
             i++;
         }else{
+            console.log(`${arr[idx]}(${idx}) ==> ${copy[j]}(${j})`);
+            if(num%2 === 0)
+                mergelist.push({indices: [idx, j], type: "copy"});
+            else
+                mergelist.push({indices: [idx, j], type: "arr"});
+
             arr[idx] = copy[j];
             idx++;
             j++;
@@ -132,14 +155,29 @@ function merge(first, mid, last, arr, copy){
 
     //both while loops used to finish placing last numbers that haven't been pushed
     while(i <= mid){
+        console.log(`${arr[idx]}(${idx}) ==> ${copy[i]}(${i})`);
+        if(num%2 === 0)
+            mergelist.push({indices: [idx, i], type: "copy"});
+        else
+            mergelist.push({indices: [idx, i], type: "arr"});
         arr[idx] = copy[i];
         idx++;
         i++;
     }
 
     while(j <= last){
+        console.log(`${arr[idx]}(${idx}) ==> ${copy[j]}(${j})`);
+        if(num%2 === 0)
+            mergelist.push({indices: [idx, j], type: "copy"});
+        else
+            mergelist.push({indices: [idx, j], type: "arr"});
         arr[idx] = copy[j];
         idx++;
         j++;
     }
+
+//    return moves;
+
 }
+
+

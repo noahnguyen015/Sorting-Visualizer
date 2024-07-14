@@ -2,8 +2,9 @@ import {BubbleSort,InsertionSort} from "./sorting.js"
 import {MergeSort,mergelist} from "./merge_sort.js"
 
 let arr = [];
+let arr2 = [];
 let org = [];
-const n = 25;
+const n = 50;
 
 const chart = document.getElementById("chart");
 
@@ -12,6 +13,7 @@ const resetButton = document.getElementById("resetButton");
 
 const bubbleSort = document.getElementById("bubbleSort");
 const insertionSort = document.getElementById("insertionSort");
+const mergeSort = document.getElementById("mergeSort");
 
 changeButton.addEventListener("click", changeArr);
 resetButton.addEventListener("click", resetArr);
@@ -19,19 +21,20 @@ resetButton.addEventListener("click", resetArr);
 //based on button pressed, used specified sorting method
 bubbleSort.addEventListener("click", ()=> sortArr("bubble"));
 insertionSort.addEventListener("click", () => sortArr("insertion"));
-
+mergeSort.addEventListener("click", () => sortArr("merge"));
 //change the numbers of the array
 function changeArr(){
 
-    
     for(let i = 0; i < n; i++){
         //equation returns number from 5-100
         arr[i] = Math.floor(Math.random()*(100-5+1)+5);
     }
-
-    //arr = [72,43,48,39,38,98,92,58,52,9];
+    
+    //arr = [100, 50, 80, 10, 30, 20];
 
     org = [...arr];
+
+    arr2 = [...arr];
     showArr();
 }
 
@@ -72,39 +75,26 @@ function sortArr(type){
     //use a copy of the array
     const copy = [...arr];
     let copy2 = [...arr];
-    let copy3 = arr.slice();
 
     let movelist = [];
-    let movelist2 = [];
 
     if(type && type == "bubble"){
-        console.log(copy2);
         movelist = BubbleSort(copy);
-        MergeSort(0,arr.length-1,copy2,copy3);
-
-        console.log(copy);
-        console.log(copy2);
-
-        let same = false
-        
-        for(let i = 0; i < copy.length; i++){
-            if(copy[i] === copy2[i])
-                same = true;
-            else
-                same = false;
-        }
-
-        if(same){
-            console.log("THEY ARE SAME");
-        }else
-        {
-            console.log("WRONG");
-        }
-
+        animateArr(movelist);
     }
     else if(type && type == "insertion"){
         movelist = InsertionSort(copy);
         animateArr(movelist);
+    }
+    else if(type && type == "merge"){
+
+    //    let mergelist = [];
+
+        console.log(copy);
+        MergeSort(0,arr.length-1,copy,copy2,0,mergelist);
+        console.log(mergelist);
+        animateMerge(mergelist);
+
     }
 }
 
@@ -172,9 +162,64 @@ function playSound(freq){
     node.connect(audiocontext.destination);   
 }
 
+function showArr2(move){
+
+    //clear element to show updated chart
+    chart2.innerHTML = "";
+
+    for(let i = 0; i < arr2.length; i++){
+
+        //create a bar with specified height and add style
+        const bar = document.createElement("div");
+        bar.style.height = arr2[i] + "%";
+        bar.classList.add("bar");
+        chart2.appendChild(bar);
+
+        //if a move argument is specified, change the bar to certain color
+        //only on the array currently being looked at
+        if(move && move.indices.includes(i))
+        {
+            const color = "rgb(81, 194, 81)";
+            bar.style.backgroundColor = color;
+        }
+    }
+}
+
+function animateMerge(mergelist){
+    
+    if(mergelist.length == 0){
+        return showArr();
+    }
+
+    const move = mergelist.shift();
+
+    let i;
+    let j;
+
+    [i,j] = move.indices;
+
+    if(move.type == "arr"){
+        console.log(`${i} ${j}`);
+        arr2[i] = arr[j];
+        playSound(100+(arr[j]/100)*330);
+        showArr2(move);
+    }else{
+        console.log(`${i} ${j}`);
+        arr[i] = arr2[j];
+        playSound(100+(arr2[j]/100)*330);
+        showArr(move);
+    }
+
+    setTimeout(()=> animateMerge(mergelist), 50);
+
+
+}
+
 //call to show an inital array when loaded in
 changeArr();
 showArr();
+showArr2();
+
 
 
 
