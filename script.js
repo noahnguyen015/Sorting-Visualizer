@@ -1,11 +1,12 @@
 import {BubbleSort,InsertionSort} from "./sorting.js"
 import {MergeSort,mergelist} from "./merge_sort.js"
 
+
 let arr = [];
 let arr2 = [];
 let arr3 = [];
 let org = [];
-const n = 50;
+const n = 20;
 
 const chart = document.getElementById("chart");
 
@@ -23,6 +24,7 @@ resetButton.addEventListener("click", resetArr);
 bubbleSort.addEventListener("click", ()=> sortArr("bubble"));
 insertionSort.addEventListener("click", () => sortArr("insertion"));
 mergeSort.addEventListener("click", () => sortArr("merge"));
+
 //change the numbers of the array
 function changeArr(){
 
@@ -32,7 +34,6 @@ function changeArr(){
     }
 
     org = [...arr];
-
     arr2 = [...arr];
     arr3 = [...arr];
 
@@ -63,8 +64,7 @@ function showArr(move){
 
         //if a move argument is specified, change the bar to certain color
         //only on the array currently being looked at
-        if(move && move.indices.includes(i))
-        {
+        if(move && move.indices.includes(i)){
             const color = "rgb(81, 194, 81)";
             bar.style.backgroundColor = color;
         }
@@ -89,12 +89,8 @@ function sortArr(type){
     }
     else if(type && type == "merge"){
 
-    //    let mergelist = [];
-
-        console.log(copy);
+        //need to pass
         MergeSort(0,arr.length-1,copy,copy2,0,mergelist);
-        console.log(mergelist);
-
         animateMerge(mergelist);
 
     }
@@ -164,76 +160,73 @@ function playSound(freq){
     node.connect(audiocontext.destination);   
 }
 
-function showArr2(move){
 
-    //clear element to show updated chart
-    chart2.innerHTML = "";
 
-    for(let i = 0; i < arr3.length; i++){
-
-        //create a bar with specified height and add style
-        const bar = document.createElement("div");
-        bar.style.height = arr3[i] + "%";
-        bar.classList.add("bar");
-        chart2.appendChild(bar);
-
-        //if a move argument is specified, change the bar to certain color
-        //only on the array currently being looked at
-        if(move && move.indices.includes(i))
-        {
-            const color = "rgb(81, 194, 81)";
-            bar.style.backgroundColor = color;
-        }
-    }
-}
-
+//we need a way to show the changes of the array from merge sort
+//we use a 3rd array (arr) to hold every change made
+//this way we can record animations without affecting values of merging between 2 arrays
 function showMerge(move, idx1,arrC){
 
-    chart2.innerHTML = "";
+    //clear previous chart
+    chart.innerHTML = "";
 
-    for(let i = 0; i < arr3.length; i++){
+    for(let i = 0; i < arr.length; i++){
         
+        //if it is the index that has changed, change it
+        //change from respective array arr3(arr) or arr2(copy)
         if(i == idx1){
             const bar = document.createElement("div");
             bar.style.height = arrC[i] + "%";
             bar.classList.add("bar");
-            chart2.appendChild(bar);
-            arr3[i] = arrC[i];
-            if(move && move.indices.includes(i)){
-                const color = "rgb(81, 194, 81)";
-                bar.style.backgroundColor = color;
-            }
+            chart.appendChild(bar);
+        //make sure to save the swapped value to the total array
+        //it is to preserve it's spot in the animation
+            arr[i] = arrC[i];
+        
+        //color the change to the element that is changing
+        if(move && move.indices.includes(idx1)){
+            const color = "rgb(81, 194, 81)";
+            bar.style.backgroundColor = color;
+        }
         }else{
-            //create a bar with specified height and add style
+        //don't change any other value than the one at idx1
+        //make sure the rest of array stays the same throughout
             const bar = document.createElement("div");
-            bar.style.height = arr3[i] + "%";
+            bar.style.height = arr[i] + "%";
             bar.classList.add("bar");
-            chart2.appendChild(bar);
+            chart.appendChild(bar);
         }
     }
 }
 
 function animateMerge(mergelist){
     
+    //reset the original arrays so reset button works
     if(mergelist.length == 0){
+        arr2 = [...org];
+        arr3 = [...org];
         return showMerge();
     }
 
+    //grab the latest move
     const move = mergelist.shift();
 
     let i;
     let j;
 
+    //grab indices for changing
     [i,j] = move.indices;
 
     if(move.type == "arr"){
-        arr2[i] = arr[j];
+    //if change to "arr" meaning array that holds the final values (arr3)
+        arr3[i] = arr2[j];
+        playSound(100+(arr[j]/100)*330);
+        showMerge(move,i,arr3);
+    }else{
+    //other one is changes to "copy", array that holds the other changes and setup (arr2)
+        arr2[i] = arr3[j];
         playSound(100+(arr[j]/100)*330);
         showMerge(move,i,arr2);
-    }else{
-        arr[i] = arr2[j];
-        playSound(100+(arr[j]/100)*330);
-        showMerge(move,i,arr);
     }
 
     setTimeout(()=> animateMerge(mergelist), 50);
@@ -242,7 +235,6 @@ function animateMerge(mergelist){
 //call to show an inital array when loaded in
 changeArr();
 showArr();
-showArr2();
 
 
 

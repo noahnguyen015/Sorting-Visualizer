@@ -1,87 +1,10 @@
 export let mergelist = [];
 
-/*
-export function MergeSort(arr){
-    
-    if(arr.length <= 1)
-        return;
 
-    const mid = Math.floor(arr.length/2);
-
-    let leftArr = [];
-    leftArr.length = mid;
-
-    let rightArr = [];
-    rightArr.length = arr.length - mid; 
-
-    let i = 0;
-    let j = 0;
-    let idx = 0;
-    let movelist1 = [];
-    let movelist2 = []
-
-    while(idx < arr.length){
-        if(i < leftArr.length){
-            leftArr[i] = arr[idx]; 
-            movelist1.push(idx);
-            i++;
-            idx++;
-        }else{
-            rightArr[j] = arr[idx];
-            movelist2.push(idx);
-            j++;
-            idx++;
-        }
-    }
-
-    MergeSort(leftArr);
-    MergeSort(rightArr);
-
-    console.log(movelist1);
-    console.log(movelist2);
-
-    merge(leftArr, rightArr, arr, movelist1, movelist2);
-}
-
-function merge(leftArr, rightArr, arr, movelist1, movelist2){
-
-    let i = 0;
-    let j = 0;
-    let idx = 0;
-
-    while(i < leftArr.length && j < rightArr.length){
-        if(leftArr[i] < rightArr[j]){
-          //  mergelist.push({indices: [idx, movelist1[i]], type: "swap"});
-            arr[idx] = leftArr[i];
-            idx++;
-            i++;
-        }else{
-        //    mergelist.push({indices: [idx, movelist2[j]], type: "swap"});
-            arr[idx] = rightArr[j];
-            idx++;
-            j++;
-        }
-    }
-
-    while(i < leftArr.length){
-    //    mergelist.push({indices: [idx, movelist1[i]], type: "swap"});
-        arr[idx] = leftArr[i];
-        idx++;
-        i++;
-    }
-
-    while(j < rightArr.length){
-    //    mergelist.push({indices: [idx, movelist2[j]], type: "swap"});
-        arr[idx] = rightArr[j];
-        idx++;
-        j++;
-    }
-
-    console.log(arr);
-}
-
-*/
-
+//call left side first, then right side
+//start/finish the sorting/merging on the left side, start/finish on right side
+//compares 2 sorted subarrays to make a sorted main array
+//merge/sort them together after both sides are sorted
 export function MergeSort(first,last,arr,copy,num,mergelist){
 
     //if it is just one element, just return it as it is 
@@ -91,29 +14,38 @@ export function MergeSort(first,last,arr,copy,num,mergelist){
     //grabs the middle index for partitioning the arrays
     const mid = Math.floor((first + last)/2);
     
-    //call left side first, then right side
-    //start/finish the sorting/merging on the left side, start/finish on right side
-    //merge/sort them together after both sides are sorted
 
     /*
     1. switch back and forth between copy and arr
-    2. changes done in original array
-    3. then once 1 half is finished, sort it all in copy array 
-    4. done so the final sort with two sorted halves is done in the actual array
-    5. left hand side: 0-middle:
-       right hand side: middle+1, end
+    2. starts with changes in arr (original array)
+    3. Then it flip flops from arr-copy changes, depending on stage of merging it is at
+    4. start with sorting left then right
+    5. 2 halves sorted --> compare and put into "arr" (depending on stage)
+    6. 2nd last will always be the arr = copy
+    7. Done so the final sort with two sorted halves is done in the actual array (arr)
+    8. left hand side: 0, middle:
+    9. right hand side: middle+1, end
+
+       NOTE: Due to flip flop, we need to keep track of which array's values are being changed
+
+       1. We need a number (num), passed as 0 initally and +1 every time we branch out into 2 subarrays
+       2. MergeSort flip flops when arr = arr --> copy --> array --> copy --> ...
+       3. This means all changes to arr are at even numbers
+       4. Which also means all changes to copy are odd numbers
+       5. So we specify if the number is even, we record it as a change in arr
+       6. Also implying we record the rest as changes done in copy
+
     */
 
-//    console.log(num);
+    //increment, merging & 2 halves will have same number
+    //indicating arr = arr? or arr = copy
+    
     num++;
 
-    MergeSort(first, mid, copy, arr,num,mergelist);
-    MergeSort(mid+1, last, copy, arr,num,mergelist);
-    merge(first, mid, last, arr, copy,num);
+    MergeSort(first, mid, copy, arr, num, mergelist);
+    MergeSort(mid+1, last, copy, arr,num, mergelist);
+    merge(first, mid, last, arr, copy, num);
 
-  //  console.log(mergelist);
-    console.log(copy);
-    console.log(arr);
 }
 
 function merge(first, mid, last, arr, copy,num){
@@ -131,18 +63,21 @@ function merge(first, mid, last, arr, copy,num){
     while(i <= mid && j <= last){
 
         if(copy[i] < copy[j]){
-            console.log(`${arr[idx]}(${idx}) ==> ${copy[i]}(${i})`);
+            //used to specify odd or even (0 = even, 1 = odd)
             if(num%2 === 0)
+            //records the change in value at idx to value at i in "copy"
+            //"copy" depends on which stage the merge is at
                 mergelist.push({indices: [idx, i], type: "copy"});
             else
                 mergelist.push({indices: [idx, i], type: "arr"});
 
+            //perform change, then increment on
             arr[idx] = copy[i];
             idx++;
             i++;
         }else{
-            console.log(`${arr[idx]}(${idx}) ==> ${copy[j]}(${j})`);
             if(num%2 === 0)
+            //same recording except done with j instead of i in "copy"
                 mergelist.push({indices: [idx, j], type: "copy"});
             else
                 mergelist.push({indices: [idx, j], type: "arr"});
@@ -154,8 +89,8 @@ function merge(first, mid, last, arr, copy,num){
     }
 
     //both while loops used to finish placing last numbers that haven't been pushed
+    //don't need to worry if last #'s in order, the 2 arrays comparing should be sorted
     while(i <= mid){
-        console.log(`${arr[idx]}(${idx}) ==> ${copy[i]}(${i})`);
         if(num%2 === 0)
             mergelist.push({indices: [idx, i], type: "copy"});
         else
@@ -166,7 +101,6 @@ function merge(first, mid, last, arr, copy,num){
     }
 
     while(j <= last){
-        console.log(`${arr[idx]}(${idx}) ==> ${copy[j]}(${j})`);
         if(num%2 === 0)
             mergelist.push({indices: [idx, j], type: "copy"});
         else
