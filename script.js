@@ -30,8 +30,6 @@ function changeArr(){
         //equation returns number from 5-100
         arr[i] = Math.floor(Math.random()*(100-5+1)+5);
     }
-    
-    //arr = [100, 50, 80, 10, 30, 20];
 
     org = [...arr];
 
@@ -189,13 +187,13 @@ function showArr2(move){
     }
 }
 
-function showMerge(move, idx1, idx2,arrC){
+function showMerge(move, idx1,arrC){
 
     chart2.innerHTML = "";
 
     for(let i = 0; i < arr3.length; i++){
         
-        if(i == idx1 || i == idx2){
+        if(i == idx1){
             const bar = document.createElement("div");
             bar.style.height = arrC[i] + "%";
             bar.classList.add("bar");
@@ -218,7 +216,7 @@ function showMerge(move, idx1, idx2,arrC){
 function animateMerge(mergelist){
     
     if(mergelist.length == 0){
-        return showArr();
+        return showMerge();
     }
 
     const move = mergelist.shift();
@@ -231,13 +229,11 @@ function animateMerge(mergelist){
     if(move.type == "arr"){
         arr2[i] = arr[j];
         playSound(100+(arr[j]/100)*330);
-        showArr2(move);
-        showMerge(move,i,j,arr2);
+        showMerge(move,i,arr2);
     }else{
         arr[i] = arr2[j];
-        playSound(100+(arr2[j]/100)*330);
-        //showArr(move);
-        showMerge(move,i,j,arr);
+        playSound(100+(arr[j]/100)*330);
+        showMerge(move,i,arr);
     }
 
     setTimeout(()=> animateMerge(mergelist), 50);
