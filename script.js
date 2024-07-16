@@ -1,12 +1,13 @@
 import {BubbleSort,InsertionSort} from "./sorting.js"
-import {MergeSort,mergelist} from "./merge_sort.js"
+import {MergeSort} from "./merge_sort.js"
+import {QuickSort} from "./quick_sort.js"
 
 
 let arr = [];
 let arr2 = [];
 let arr3 = [];
 let org = [];
-const n = 20;
+const n = 100;
 
 const chart = document.getElementById("chart");
 
@@ -16,6 +17,7 @@ const resetButton = document.getElementById("resetButton");
 const bubbleSort = document.getElementById("bubbleSort");
 const insertionSort = document.getElementById("insertionSort");
 const mergeSort = document.getElementById("mergeSort");
+const quickSort = document.getElementById("quickSort");
 
 changeButton.addEventListener("click", changeArr);
 resetButton.addEventListener("click", resetArr);
@@ -24,6 +26,7 @@ resetButton.addEventListener("click", resetArr);
 bubbleSort.addEventListener("click", ()=> sortArr("bubble"));
 insertionSort.addEventListener("click", () => sortArr("insertion"));
 mergeSort.addEventListener("click", () => sortArr("merge"));
+quickSort.addEventListener("click", () => sortArr("quick"));
 
 //change the numbers of the array
 function changeArr(){
@@ -37,6 +40,7 @@ function changeArr(){
     arr2 = [...arr];
     arr3 = [...arr];
 
+    
     showArr();
 }
 
@@ -74,7 +78,7 @@ function showArr(move){
 function sortArr(type){
 
     //use a copy of the array
-    const copy = [...arr];
+    let copy = [...arr];
     let copy2 = [...arr];
 
     let movelist = [];
@@ -89,10 +93,20 @@ function sortArr(type){
     }
     else if(type && type == "merge"){
 
-        //need to pass
-        MergeSort(0,arr.length-1,copy,copy2,0,mergelist);
-        animateMerge(mergelist);
+        let mergelist = [];
 
+        //need to pass mergelist as well
+        MergeSort(0,arr.length-1,copy,copy2,0,mergelist);
+        console.log(mergelist);
+        animateMerge(mergelist);
+    }
+    else if(type && type == "quick"){
+
+        let quicklist = [];
+
+        QuickSort(copy,0,arr.length-1,quicklist);
+        console.log(quicklist);
+        animateQuick(quicklist);
     }
 }
 
@@ -220,7 +234,7 @@ function animateMerge(mergelist){
     if(move.type == "arr"){
     //if change to "arr" meaning array that holds the final values (arr3)
         arr3[i] = arr2[j];
-        playSound(100+(arr[j]/100)*330);
+        playSound(200+(arr[j]/100)*330);
         showMerge(move,i,arr3);
     }else{
     //other one is changes to "copy", array that holds the other changes and setup (arr2)
@@ -230,6 +244,64 @@ function animateMerge(mergelist){
     }
 
     setTimeout(()=> animateMerge(mergelist), 50);
+}
+
+function showQuick(move){
+
+    //clear element to show updated chart
+    chart.innerHTML = "";
+
+    for(let i = 0; i < arr.length; i++){
+
+        //create a bar with specified height and add style
+        const bar = document.createElement("div");
+        bar.style.height = arr[i] + "%";
+        bar.classList.add("bar");
+        chart.appendChild(bar);
+
+        //if a move argument is specified, change the bar to certain color
+        //only on the array currently being looked at
+        if(move && move.indices.includes(i) || move.pivot == i){
+            if(move.pivot == i){
+                const color = "red";
+                bar.style.backgroundColor = color;
+
+            }else{
+                const color = "rgb(81, 194, 81)";
+                bar.style.backgroundColor = color;
+            }
+        }
+    }
+}
+
+function animateQuick(quicklist){
+    //animates the sorting of the array
+    //if length is 0 show the final sorted array
+    if(quicklist.length == 0)
+        return showArr();
+
+    let move = {};
+    
+    move = quicklist.shift();
+
+    let i;
+    let j;
+
+    [i,j] = move.indices;
+    
+    //swap the actual array
+    if(move.type == "swap"){
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+
+    //sound playing to show array bars being swapped
+    //interpolation equation, in between 100-430Hz
+    playSound(100+(arr[i]/100)*330);
+    playSound(100+(arr[j]/100)*330);
+    showQuick(move);
+
+    //call the function every 50 seconds till there are no more moves
+    setTimeout(() => animateQuick(quicklist), 50);
 }
 
 //call to show an inital array when loaded in

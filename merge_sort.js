@@ -1,5 +1,3 @@
-export let mergelist = [];
-
 
 //call left side first, then right side
 //start/finish the sorting/merging on the left side, start/finish on right side
@@ -44,11 +42,11 @@ export function MergeSort(first,last,arr,copy,num,mergelist){
 
     MergeSort(first, mid, copy, arr, num, mergelist);
     MergeSort(mid+1, last, copy, arr,num, mergelist);
-    merge(first, mid, last, arr, copy, num);
+    merge(first, mid, last, arr, copy, num, mergelist);
 
 }
 
-function merge(first, mid, last, arr, copy,num){
+function merge(first, mid, last, arr, copy,num, mergelist){
 
 // let moves = [];
 
