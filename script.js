@@ -30,11 +30,20 @@ quickSort.addEventListener("click", () => sortArr("quick"));
 
 //change the numbers of the array
 function changeArr(){
+    
 
+    arr =  [45, 64, 90, 14, 93, 44, 68, 64, 61, 48, 85,
+         58, 55, 42, 71, 96, 80, 96, 10, 56, 96, 8, 74, 52, 49, 46, 
+         98, 23, 60, 50, 37, 71, 64, 60, 55, 35, 7, 57, 21, 82, 18, 82, 57, 31, 
+         79, 47, 21, 79, 96, 27, 99, 49, 10, 79, 59, 7, 84, 84, 61, 56, 13, 36, 29, 43, 
+         7, 57, 17, 55, 17, 79, 76, 85, 58, 42, 41, 39, 21, 34, 14, 
+        6, 95, 76, 19, 33, 47, 12, 30, 63, 30, 21, 26, 81, 11, 58, 21, 21, 62, 85, 70, 26]
+
+    /*    
     for(let i = 0; i < n; i++){
         //equation returns number from 5-100
         arr[i] = Math.floor(Math.random()*(100-5+1)+5);
-    }
+    }*/
 
     org = [...arr];
     arr2 = [...arr];
@@ -67,7 +76,7 @@ function showArr(move){
         chart.appendChild(bar);
 
         //if a move argument is specified, change the bar to certain color
-        //only on the array currently being looked at
+        //only on the positions currently being looked at
         if(move && move.indices.includes(i)){
             const color = "rgb(81, 194, 81)";
             bar.style.backgroundColor = color;
@@ -97,15 +106,13 @@ function sortArr(type){
 
         //need to pass mergelist as well
         MergeSort(0,arr.length-1,copy,copy2,0,mergelist);
-        console.log(mergelist);
+        //console.log(mergelist);
         animateMerge(mergelist);
     }
     else if(type && type == "quick"){
 
         let quicklist = [];
-
         QuickSort(copy,0,arr.length-1,quicklist);
-        console.log(quicklist);
         animateQuick(quicklist);
     }
 }
@@ -246,21 +253,19 @@ function animateMerge(mergelist){
     setTimeout(()=> animateMerge(mergelist), 50);
 }
 
+//identical to the showArr function
 function showQuick(move){
 
-    //clear element to show updated chart
     chart.innerHTML = "";
 
     for(let i = 0; i < arr.length; i++){
-
-        //create a bar with specified height and add style
         const bar = document.createElement("div");
         bar.style.height = arr[i] + "%";
         bar.classList.add("bar");
         chart.appendChild(bar);
 
-        //if a move argument is specified, change the bar to certain color
-        //only on the array currently being looked at
+        //only changei is in the || inclusion
+        //if it is the pivot included, then we color it red, otherwise it is a swap/compare
         if(move && move.indices.includes(i) || move.pivot == i){
             if(move.pivot == i){
                 const color = "red";
@@ -274,9 +279,9 @@ function showQuick(move){
     }
 }
 
+
+//identical to the animateArr function, but need to pass pivotIdx
 function animateQuick(quicklist){
-    //animates the sorting of the array
-    //if length is 0 show the final sorted array
     if(quicklist.length == 0)
         return showArr();
 
@@ -289,18 +294,14 @@ function animateQuick(quicklist){
 
     [i,j] = move.indices;
     
-    //swap the actual array
     if(move.type == "swap"){
         [arr[i], arr[j]] = [arr[j], arr[i]];
     }
 
-    //sound playing to show array bars being swapped
-    //interpolation equation, in between 100-430Hz
     playSound(100+(arr[i]/100)*330);
     playSound(100+(arr[j]/100)*330);
     showQuick(move);
 
-    //call the function every 50 seconds till there are no more moves
     setTimeout(() => animateQuick(quicklist), 50);
 }
 
