@@ -7,7 +7,8 @@ let arr = [];
 let arr2 = [];
 let arr3 = [];
 let org = [];
-const n = 100;
+let play = true;
+const n = 20;
 
 const chart = document.getElementById("chart");
 
@@ -30,36 +31,30 @@ quickSort.addEventListener("click", () => sortArr("quick"));
 
 //change the numbers of the array
 function changeArr(){
-    
 
-    arr =  [45, 64, 90, 14, 93, 44, 68, 64, 61, 48, 85,
-         58, 55, 42, 71, 96, 80, 96, 10, 56, 96, 8, 74, 52, 49, 46, 
-         98, 23, 60, 50, 37, 71, 64, 60, 55, 35, 7, 57, 21, 82, 18, 82, 57, 31, 
-         79, 47, 21, 79, 96, 27, 99, 49, 10, 79, 59, 7, 84, 84, 61, 56, 13, 36, 29, 43, 
-         7, 57, 17, 55, 17, 79, 76, 85, 58, 42, 41, 39, 21, 34, 14, 
-        6, 95, 76, 19, 33, 47, 12, 30, 63, 30, 21, 26, 81, 11, 58, 21, 21, 62, 85, 70, 26]
+    if(play){
+        for(let i = 0; i < n; i++){
+            //equation returns number from 5-100
+            arr[i] = Math.floor(Math.random()*(100-1+1)+1);
+        }
 
-    /*    
-    for(let i = 0; i < n; i++){
-        //equation returns number from 5-100
-        arr[i] = Math.floor(Math.random()*(100-5+1)+5);
-    }*/
+        org = [...arr];
+        arr2 = [...arr];
+        arr3 = [...arr];
 
-    org = [...arr];
-    arr2 = [...arr];
-    arr3 = [...arr];
-
-    
-    showArr();
+        showArr();
+    }
 }
 
 function resetArr(){
-    //resets to pre-sorted array version of current array
-    for(let i = 0; i < n; i++){
-        arr[i] = org[i];
+    if(play){
+        //resets to pre-sorted array version of current array
+        for(let i = 0; i < n; i++){
+            arr[i] = org[i];
+        }
+        console.log(arr);
+        showArr();
     }
-    console.log(arr);
-    showArr();
 }
 
 function showArr(move){
@@ -78,7 +73,9 @@ function showArr(move){
         //if a move argument is specified, change the bar to certain color
         //only on the positions currently being looked at
         if(move && move.indices.includes(i)){
-            const color = "rgb(81, 194, 81)";
+            //const color = "rgb(81, 194, 81)";
+            //const color = "rgb(105, 69, 105)";
+            const color = "rgb(165, 89, 165)";
             bar.style.backgroundColor = color;
         }
     }
@@ -89,39 +86,50 @@ function sortArr(type){
     //use a copy of the array
     let copy = [...arr];
     let copy2 = [...arr];
-
     let movelist = [];
 
     if(type && type == "bubble"){
-        movelist = BubbleSort(copy);
-        animateArr(movelist);
+        if(play){
+            movelist = BubbleSort(copy);
+            animateArr(movelist);
+            play = false;
+        }
     }
     else if(type && type == "insertion"){
-        movelist = InsertionSort(copy);
-        animateArr(movelist);
+        if(play){
+            movelist = InsertionSort(copy);
+            animateArr(movelist);
+            play = false;
+        }
     }
     else if(type && type == "merge"){
 
-        let mergelist = [];
-
-        //need to pass mergelist as well
-        MergeSort(0,arr.length-1,copy,copy2,0,mergelist);
-        //console.log(mergelist);
-        animateMerge(mergelist);
+        if(play){
+            let mergelist = [];
+            //need to pass mergelist as well
+            MergeSort(0,arr.length-1,copy,copy2,0,mergelist);
+            //console.log(mergelist);
+            animateMerge(mergelist);
+            play = false;
+        }
     }
     else if(type && type == "quick"){
-
-        let quicklist = [];
-        QuickSort(copy,0,arr.length-1,quicklist);
-        animateQuick(quicklist);
+        if(play){
+            let quicklist = [];
+            QuickSort(copy,0,arr.length-1,quicklist);
+            animateQuick(quicklist);
+            play = false;
+        }
     }
 }
 
 function animateArr(movelist){
     //animates the sorting of the array
     //if length is 0 show the final sorted array
-    if(movelist.length == 0)
+    if(movelist.length == 0){
+        play = true;
         return showArr();
+    }
 
     let move = {};
     
@@ -206,7 +214,7 @@ function showMerge(move, idx1,arrC){
         
         //color the change to the element that is changing
         if(move && move.indices.includes(idx1)){
-            const color = "rgb(81, 194, 81)";
+            const color = "rgb(165, 89, 165)";
             bar.style.backgroundColor = color;
         }
         }else{
@@ -226,6 +234,7 @@ function animateMerge(mergelist){
     if(mergelist.length == 0){
         arr2 = [...org];
         arr3 = [...org];
+        play = true;
         return showMerge();
     }
 
@@ -272,7 +281,7 @@ function showQuick(move){
                 bar.style.backgroundColor = color;
 
             }else{
-                const color = "rgb(81, 194, 81)";
+                const color = "rgb(165, 89, 165)";
                 bar.style.backgroundColor = color;
             }
         }
@@ -282,8 +291,10 @@ function showQuick(move){
 
 //identical to the animateArr function, but need to pass pivotIdx
 function animateQuick(quicklist){
-    if(quicklist.length == 0)
+    if(quicklist.length == 0){
+        play = true;
         return showArr();
+    }
 
     let move = {};
     
