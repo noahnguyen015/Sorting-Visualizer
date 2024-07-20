@@ -10,6 +10,14 @@ body{
     align-items: center;
 }
 
+#clock{
+    font-family: 'Trebuchet MS';
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: white;
+    margin: 2px 0px 10px 0px;
+}
+
 #chart{
     display: flex;
     align-items: flex-end;
@@ -25,8 +33,11 @@ body{
 }
 
 .bar{
-    width: 5px;
+    width: 7px;
     background-color: white;
+    border: solid;
+    border-color: white;
+    border-width: 1px;
     margin: 10px 0px 0px 1px;
 }
 
@@ -52,4 +63,5 @@ body{
 
 .button:active{
     color:rgb(70, 89, 173);
+    transition: none;
 }

@@ -1,14 +1,17 @@
 import {BubbleSort,InsertionSort} from "./sorting.js"
 import {MergeSort} from "./merge_sort.js"
 import {QuickSort} from "./quick_sort.js"
-
+import {startTimer, stopTimer, resetTimer} from "./timer.js"
 
 let arr = [];
+const n = 25;
+//arr2 & arr3 used in merge sort
 let arr2 = [];
 let arr3 = [];
 let org = [];
-let play = true;
-const n = 20;
+
+let isPlaying = false;
+let isSetting = true;
 
 const chart = document.getElementById("chart");
 
@@ -32,7 +35,8 @@ quickSort.addEventListener("click", () => sortArr("quick"));
 //change the numbers of the array
 function changeArr(){
 
-    if(play){
+    //can't change while sorting
+    if(!isPlaying || isSetting){
         for(let i = 0; i < n; i++){
             //equation returns number from 5-100
             arr[i] = Math.floor(Math.random()*(100-1+1)+1);
@@ -41,19 +45,25 @@ function changeArr(){
         org = [...arr];
         arr2 = [...arr];
         arr3 = [...arr];
-
         showArr();
+        //make sure you can choose sorting again
+        isPlaying = false;
+        //set timer back to 0 when changing
+        resetTimer();
     }
 }
 
 function resetArr(){
-    if(play){
+    //can't reset while sorting
+    if(!isPlaying || isSetting){
         //resets to pre-sorted array version of current array
         for(let i = 0; i < n; i++){
             arr[i] = org[i];
         }
-        console.log(arr);
+
         showArr();
+        isPlaying = false;
+        resetTimer();
     }
 }
 
@@ -89,36 +99,46 @@ function sortArr(type){
     let movelist = [];
 
     if(type && type == "bubble"){
-        if(play){
+        //isPlaying variable will be true when pressed, set to false till sorting is finished
+        if(!isPlaying){
             movelist = BubbleSort(copy);
+            //booleans use to not allow pressing other buttons till sorting is done
+            isPlaying = true;
+            isSetting = false;
+            startTimer();
             animateArr(movelist);
-            play = false;
         }
     }
     else if(type && type == "insertion"){
-        if(play){
+        if(!isPlaying){
             movelist = InsertionSort(copy);
+            isPlaying = true;
+            isSetting = false;
+            startTimer();
             animateArr(movelist);
-            play = false;
         }
     }
     else if(type && type == "merge"){
 
-        if(play){
+        if(!isPlaying){
             let mergelist = [];
             //need to pass mergelist as well
             MergeSort(0,arr.length-1,copy,copy2,0,mergelist);
             //console.log(mergelist);
+            isPlaying = true;
+            isSetting = false;
+            startTimer();
             animateMerge(mergelist);
-            play = false;
         }
     }
     else if(type && type == "quick"){
-        if(play){
+        if(!isPlaying){
             let quicklist = [];
             QuickSort(copy,0,arr.length-1,quicklist);
+            startTimer();
+            isPlaying = true;
+            isSetting = false;
             animateQuick(quicklist);
-            play = false;
         }
     }
 }
@@ -127,7 +147,9 @@ function animateArr(movelist){
     //animates the sorting of the array
     //if length is 0 show the final sorted array
     if(movelist.length == 0){
-        play = true;
+        //when finished, stop timer, and allow use of Reset & Change again
+        stopTimer();
+        isSetting = true;
         return showArr();
     }
 
@@ -234,7 +256,8 @@ function animateMerge(mergelist){
     if(mergelist.length == 0){
         arr2 = [...org];
         arr3 = [...org];
-        play = true;
+        isSetting = true;
+        stopTimer();
         return showMerge();
     }
 
@@ -292,7 +315,8 @@ function showQuick(move){
 //identical to the animateArr function, but need to pass pivotIdx
 function animateQuick(quicklist){
     if(quicklist.length == 0){
-        play = true;
+        stopTimer();
+        isSetting = true;
         return showArr();
     }
 
@@ -316,12 +340,8 @@ function animateQuick(quicklist){
     setTimeout(() => animateQuick(quicklist), 50);
 }
 
-//call to show an inital array when loaded in
+//call to show an initial array when loaded in
 changeArr();
 showArr();
-
-
-
-
 
 
