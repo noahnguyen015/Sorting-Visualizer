@@ -21,5 +21,8 @@ Comments are there to explain the source code and functionality
 
 Enjoy!
 
+Reference/Inspriation:
+<https://www.youtube.com/watch?v=_AwSlHlpFuc&t=64s>
+<https://www.youtube.com/watch?v=pFXYym4Wbkc&t=130s>
 
 
