@@ -1,6 +1,7 @@
-import {BubbleSort,InsertionSort} from "./sorting.js"
-import {MergeSort} from "./merge_sort.js"
-import {QuickSort} from "./quick_sort.js"
+import {BubbleSort} from "./sorts/bubble_sort.js"
+import {InsertionSort} from "./sorts/insertion_sort.js"
+import {MergeSort} from "./sorts/merge_sort.js"
+import {QuickSort} from "./sorts/quick_sort.js"
 import {startTimer, stopTimer, resetTimer} from "./timer.js"
 
 let arr = [];
