@@ -15,16 +15,18 @@ let isSetting = true;
 
 const chart = document.getElementById("chart");
 
+//settings buttons
 const changeButton = document.getElementById("changeButton");
 const resetButton = document.getElementById("resetButton");
 
+changeButton.addEventListener("click", changeArr);
+resetButton.addEventListener("click", resetArr);
+
+//sort buttons
 const bubbleSort = document.getElementById("bubbleSort");
 const insertionSort = document.getElementById("insertionSort");
 const mergeSort = document.getElementById("mergeSort");
 const quickSort = document.getElementById("quickSort");
-
-changeButton.addEventListener("click", changeArr);
-resetButton.addEventListener("click", resetArr);
 
 //based on button pressed, used specified sorting method
 bubbleSort.addEventListener("click", ()=> sortArr("bubble"));
@@ -32,18 +34,19 @@ insertionSort.addEventListener("click", () => sortArr("insertion"));
 mergeSort.addEventListener("click", () => sortArr("merge"));
 quickSort.addEventListener("click", () => sortArr("quick"));
 
+//size buttons
 const ten = document.getElementById("ten");
 const twenty = document.getElementById("twenty");
 const fifty  = document.getElementById("fifty");
 const seventyfive = document.getElementById("seventyfive");
 const hundred = document.getElementById("hundred");
 
-
 ten.addEventListener("click", () => changeSize(10));
 twenty.addEventListener("click",() => changeSize(20));
 fifty.addEventListener("click",() => changeSize(50));
 seventyfive.addEventListener("click",() => changeSize(75));
 hundred.addEventListener("click", () => changeSize(100));
+
 
 function changeSize(num){
     if(!isPlaying || isSetting){
@@ -53,10 +56,6 @@ function changeSize(num){
         showArr();
     }
 }
-
-
-
-
 
 //change the numbers of the array
 function changeArr(){
@@ -116,6 +115,69 @@ function showArr(move){
             //const color = "rgb(105, 69, 105)";
             const color = "rgb(165, 89, 165)";
             bar.style.backgroundColor = color;
+        }
+    }
+}
+
+//we need a way to show the changes of the array from merge sort
+//we use a 3rd array (arr) to hold every change made
+//this way we can record animations without affecting values of merging between 2 arrays
+function showMerge(move, idx1,arrC){
+
+    //clear previous chart
+    chart.innerHTML = "";
+
+    for(let i = 0; i < arr.length; i++){
+        
+        //if it is the index that has changed, change it
+        //change from respective array arr3(arr) or arr2(copy)
+        if(i == idx1){
+            const bar = document.createElement("div");
+            bar.style.height = arrC[i] + "%";
+            bar.classList.add("bar");
+            chart.appendChild(bar);
+        //make sure to save the swapped value to the total array
+        //it is to preserve it's spot in the animation
+            arr[i] = arrC[i];
+        
+        //color the change to the element that is changing
+        if(move && move.indices.includes(idx1)){
+            const color = "rgb(165, 89, 165)";
+            bar.style.backgroundColor = color;
+        }
+        }else{
+        //don't change any other value than the one at idx1
+        //make sure the rest of array stays the same throughout
+            const bar = document.createElement("div");
+            bar.style.height = arr[i] + "%";
+            bar.classList.add("bar");
+            chart.appendChild(bar);
+        }
+    }
+}
+
+//identical to the showArr function
+function showQuick(move){
+
+    chart.innerHTML = "";
+
+    for(let i = 0; i < arr.length; i++){
+        const bar = document.createElement("div");
+        bar.style.height = arr[i] + "%";
+        bar.classList.add("bar");
+        chart.appendChild(bar);
+
+        //only changei is in the || inclusion
+        //if it is the pivot included, then we color it red, otherwise it is a swap/compare
+        if(move && move.indices.includes(i) || move.pivot == i){
+            if(move.pivot == i){
+                const color = "red";
+                bar.style.backgroundColor = color;
+
+            }else{
+                const color = "rgb(165, 89, 165)";
+                bar.style.backgroundColor = color;
+            }
         }
     }
 }
@@ -206,79 +268,6 @@ function animateArr(movelist){
     setTimeout(() => animateArr(movelist), 50);
 }
 
-let audiocontext = null;
-
-function playSound(freq){
-    //create audiocontext object
-    if(audiocontext == null)
-        audiocontext = new AudioContext();
-
-    //how long the sound last
-    const duration = 0.1;
-
-    const osc = audiocontext.createOscillator();
-
-    //frequency value argument based on array value/bar height
-    osc.frequency.value = freq;
-
-    osc.start();
-    //stop after duration
-    osc.stop(audiocontext.currentTime+duration);
-
-    const node = audiocontext.createGain();
-    
-    //control volume to be about 10%
-    node.gain.value = 0.1;
-
-    //remove static in the sound
-    node.gain.linearRampToValueAtTime(0,audiocontext.currentTime+duration);
-
-
-    //connect  oscillator --> node --> speakers
-    osc.connect(node);
-    //destination is usually speakers/headphones
-    node.connect(audiocontext.destination);   
-}
-
-
-
-//we need a way to show the changes of the array from merge sort
-//we use a 3rd array (arr) to hold every change made
-//this way we can record animations without affecting values of merging between 2 arrays
-function showMerge(move, idx1,arrC){
-
-    //clear previous chart
-    chart.innerHTML = "";
-
-    for(let i = 0; i < arr.length; i++){
-        
-        //if it is the index that has changed, change it
-        //change from respective array arr3(arr) or arr2(copy)
-        if(i == idx1){
-            const bar = document.createElement("div");
-            bar.style.height = arrC[i] + "%";
-            bar.classList.add("bar");
-            chart.appendChild(bar);
-        //make sure to save the swapped value to the total array
-        //it is to preserve it's spot in the animation
-            arr[i] = arrC[i];
-        
-        //color the change to the element that is changing
-        if(move && move.indices.includes(idx1)){
-            const color = "rgb(165, 89, 165)";
-            bar.style.backgroundColor = color;
-        }
-        }else{
-        //don't change any other value than the one at idx1
-        //make sure the rest of array stays the same throughout
-            const bar = document.createElement("div");
-            bar.style.height = arr[i] + "%";
-            bar.classList.add("bar");
-            chart.appendChild(bar);
-        }
-    }
-}
-
 function animateMerge(mergelist){
     
     //reset the original arrays so reset button works
@@ -314,33 +303,6 @@ function animateMerge(mergelist){
     setTimeout(()=> animateMerge(mergelist), 50);
 }
 
-//identical to the showArr function
-function showQuick(move){
-
-    chart.innerHTML = "";
-
-    for(let i = 0; i < arr.length; i++){
-        const bar = document.createElement("div");
-        bar.style.height = arr[i] + "%";
-        bar.classList.add("bar");
-        chart.appendChild(bar);
-
-        //only changei is in the || inclusion
-        //if it is the pivot included, then we color it red, otherwise it is a swap/compare
-        if(move && move.indices.includes(i) || move.pivot == i){
-            if(move.pivot == i){
-                const color = "red";
-                bar.style.backgroundColor = color;
-
-            }else{
-                const color = "rgb(165, 89, 165)";
-                bar.style.backgroundColor = color;
-            }
-        }
-    }
-}
-
-
 //identical to the animateArr function, but need to pass pivotIdx
 function animateQuick(quicklist){
     if(quicklist.length == 0){
@@ -368,6 +330,41 @@ function animateQuick(quicklist){
 
     setTimeout(() => animateQuick(quicklist), 50);
 }
+
+let audiocontext = null;
+
+function playSound(freq){
+    //create audiocontext object
+    if(audiocontext == null)
+        audiocontext = new AudioContext();
+
+    //how long the sound last
+    const duration = 0.1;
+
+    const osc = audiocontext.createOscillator();
+
+    //frequency value argument based on array value/bar height
+    osc.frequency.value = freq;
+
+    osc.start();
+    //stop after duration
+    osc.stop(audiocontext.currentTime+duration);
+
+    const node = audiocontext.createGain();
+    
+    //control volume to be about 10%
+    node.gain.value = 0.1;
+
+    //remove static in the sound
+    node.gain.linearRampToValueAtTime(0,audiocontext.currentTime+duration);
+
+
+    //connect  oscillator --> node --> speakers
+    osc.connect(node);
+    //destination is usually speakers/headphones
+    node.connect(audiocontext.destination);   
+}
+
 
 //call to show an initial array when loaded in
 changeArr();

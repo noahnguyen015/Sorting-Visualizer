@@ -3,7 +3,6 @@ const clock = document.getElementById("clock");
 let timer = null;
 let startTime = 0;
 let timePassed = 0;
-let running = false;
 
 export function startTimer(){
     //grab the current time
