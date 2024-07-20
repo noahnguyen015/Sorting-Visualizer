@@ -4,7 +4,7 @@ import {QuickSort} from "./quick_sort.js"
 import {startTimer, stopTimer, resetTimer} from "./timer.js"
 
 let arr = [];
-const n = 25;
+let arrsize = 0;
 //arr2 & arr3 used in merge sort
 let arr2 = [];
 let arr3 = [];
@@ -32,12 +32,41 @@ insertionSort.addEventListener("click", () => sortArr("insertion"));
 mergeSort.addEventListener("click", () => sortArr("merge"));
 quickSort.addEventListener("click", () => sortArr("quick"));
 
+const ten = document.getElementById("ten");
+const twenty = document.getElementById("twenty");
+const fifty  = document.getElementById("fifty");
+const seventyfive = document.getElementById("seventyfive");
+const hundred = document.getElementById("hundred");
+
+
+ten.addEventListener("click", () => changeSize(10));
+twenty.addEventListener("click",() => changeSize(20));
+fifty.addEventListener("click",() => changeSize(50));
+seventyfive.addEventListener("click",() => changeSize(75));
+hundred.addEventListener("click", () => changeSize(100));
+
+function changeSize(num){
+    if(!isPlaying || isSetting){
+        //changes the size, creates new array, and displays on web
+        arrsize = num;
+        changeArr();
+        showArr();
+    }
+}
+
+
+
+
+
 //change the numbers of the array
 function changeArr(){
 
     //can't change while sorting
     if(!isPlaying || isSetting){
-        for(let i = 0; i < n; i++){
+
+        arr = [];
+
+        for(let i = 0; i < arrsize; i++){
             //equation returns number from 5-100
             arr[i] = Math.floor(Math.random()*(100-1+1)+1);
         }
@@ -57,7 +86,7 @@ function resetArr(){
     //can't reset while sorting
     if(!isPlaying || isSetting){
         //resets to pre-sorted array version of current array
-        for(let i = 0; i < n; i++){
+        for(let i = 0; i < arrsize; i++){
             arr[i] = org[i];
         }
 
